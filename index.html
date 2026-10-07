@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--acc:#A100FF;--acc-dark:#7a00c4;--acc-light:#f3e6ff;--acc-mid:#d580ff;--text:#1a1a1a;--text-2:#555;--text-3:#888;--border:#e8e8e8;--border-2:#d0d0d0;--bg:#f7f7f8;--surface:#fff;--danger:#c0392b;--danger-bg:#fdf0ef;--success:#1a7a4a;--success-bg:#e6f7ef;--warn:#a05a00;--warn-bg:#fff4e5}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+header{background:#fff;border-bottom:3px solid var(--acc);padding:0 1.5rem;display:flex;align-items:center;gap:14px;height:60px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(161,0,255,.08)}
+.acc-bar{width:4px;height:30px;background:var(--acc);border-radius:2px;flex-shrink:0}
+.header-logo{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.header-sub{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:.1em}
+header h1{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.readonly-badge{background:var(--acc-light);color:var(--acc);border-radius:999px;font-size:11px;font-weight:700;padding:3px 10px;border:1px solid var(--acc-mid)}
+.container{max-width:840px;margin:1.5rem auto;padding:0 1rem}
+.tabs{display:flex;margin-bottom:1.5rem;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.tab{flex:1;padding:12px 10px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text-3);transition:all .2s;font-family:'Inter',inherit;letter-spacing:.01em}
+.tab:not(:last-child){border-right:1px solid var(--border)}
+.tab.active{background:var(--acc);color:#fff}
+.tab:hover:not(.active){background:var(--acc-light);color:var(--acc)}
+.tab[style*="none"]{display:none!important}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+label{font-size:11px;font-weight:700;color:var(--text-3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;font-family:'Inter',inherit;background:#fff;color:var(--text);line-height:1.7;resize:vertical;transition:border .15s}
+textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(161,0,255,.1)}
+input[type=text],input[type=date],input[type=password],select{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;font-size:13px;font-family:'Inter',inherit;background:#fff;color:var(--text);transition:border .15s}
+input:focus,select:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(161,0,255,.1)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.field{margin-bottom:12px}
+.btn{padding:7px 14px;border:1.5px solid var(--border-2);border-radius:9px;background:#fff;font-size:12px;cursor:pointer;font-family:'Inter',inherit;color:var(--text);transition:all .15s;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--bg)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-acc{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn-acc:hover:not(:disabled){background:var(--acc-dark)}
+.btn-dark{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn-dark:hover{background:#333}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:7px}
+.btn-danger{color:var(--danger);border-color:#f5c0bc}
+.btn-danger:hover{background:var(--danger-bg)}
+.drop-area{border:2px dashed var(--border-2);border-radius:12px;padding:1rem;background:#fafafa;margin-bottom:1rem;transition:all .2s}
+.drop-area:focus-within{border-color:var(--acc);background:var(--acc-light)}
+.drop-area textarea{border:none;background:transparent;min-height:140px;box-shadow:none}
+.drop-area textarea:focus{border:none;box-shadow:none}
+.ai-status{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:1rem;font-weight:500}
+.ai-status.loading{background:var(--warn-bg);color:var(--warn)}
+.ai-status.success{background:var(--success-bg);color:var(--success)}
+.ai-status.error{background:var(--danger-bg);color:var(--danger)}
+.ai-status.hidden{display:none}
+.spinner{width:15px;height:15px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.preview-card{background:#fff;border:2px solid var(--acc-mid);border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:1rem}
+.preview-header{font-size:13px;font-weight:700;color:var(--acc);margin-bottom:12px}
+.preview-label{font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.acao-preview{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.acao-preview:last-child{border:none}
+.acao-preview-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);margin-top:5px;flex-shrink:0}
+.ata-item{background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:box-shadow .2s}
+.ata-item:hover{box-shadow:0 4px 14px rgba(161,0,255,.08)}
+.ata-header{padding:13px 1.25rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .15s}
+.ata-header:hover{background:#fafafa}
+.ata-title{font-weight:700;font-size:14px}
+.ata-meta{font-size:11px;color:var(--text-3);margin-top:2px}
+.ata-body{border-top:1px solid var(--border);padding:1.25rem 1.5rem;display:none}
+.ata-body.open{display:block}
+.ata-texto{font-size:12px;color:var(--text-2);margin-bottom:1rem;white-space:pre-wrap;line-height:1.7;background:#fafafa;border-radius:9px;padding:12px 14px;border:1px solid var(--border);max-height:200px;overflow-y:auto}
+.acoes-titulo{font-size:11px;font-weight:700;margin-bottom:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
+.acao-item{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+.acao-item:last-child{border:none}
+.acao-item input[type=checkbox]{width:16px;height:16px;cursor:pointer;margin-top:2px;flex-shrink:0;accent-color:var(--acc)}
+.acao-item input[type=checkbox]:disabled{cursor:default;opacity:.5}
+.acao-txt{font-size:13px;line-height:1.5;flex:1;font-weight:500}
+.acao-txt.done{text-decoration:line-through;color:var(--text-3);font-weight:400}
+.acao-resp{font-size:11px;color:var(--text-3);margin-top:2px}
+.acao-prazo{font-size:11px;color:var(--warn);margin-top:1px;font-weight:500}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.badge-ok{background:#e6f7ef;color:var(--success)}
+.badge-pend{background:var(--warn-bg);color:var(--warn)}
+.progress-bar{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden}
+.progress-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .4s}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+.stat{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.stat-n{font-size:26px;font-weight:700}
+.stat-l{font-size:11px;color:var(--text-3);margin-top:3px;font-weight:500}
+.filtro-row{display:flex;gap:8px;margin-bottom:1rem;align-items:center}
+.filtro-row input{flex:1}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--text-3);font-size:13px}
+.ata-acoes-grp{background:#fff;border:1px solid var(--border);border-radius:13px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ata-acoes-grp-header{background:linear-gradient(135deg,#faf5ff,#f7f7f8);padding:10px 14px;border-bottom:1px solid var(--border);border-left:3px solid var(--acc)}
+.ata-acoes-grp-body{padding:4px 14px}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.9);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:14px;color:var(--acc);font-weight:600;backdrop-filter:blur(3px)}
+.loading-overlay.hidden{display:none}
+.big-spinner{width:30px;height:30px;border:3px solid var(--acc-light);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal-overlay.hidden{display:none}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-edit{max-width:620px;max-height:90vh;overflow-y:auto}
+.modal-header{padding:1.1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,var(--acc-light),#fff);border-radius:16px 16px 0 0}
+.modal-header h2{font-size:14px;font-weight:700;color:var(--acc)}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-3);padding:3px;border-radius:5px}
+.modal-close:hover{background:var(--border)}
+.modal-body{padding:1.25rem 1.5rem}
+.modal-footer{padding:.9rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#fafafa;border-radius:0 0 16px 16px}
+.acao-edit-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.acao-edit-row:last-child{border:none}
+.acao-edit-row input{flex:1;font-size:12px}
+.save-indicator{font-size:11px;color:var(--success);font-weight:600;opacity:0;transition:opacity .3s}
+.save-indicator.show{opacity:1}
+@media(max-width:540px){.row2{grid-template-columns:1fr}.filtro-row{flex-wrap:wrap}.stats-row{grid-template-columns:1fr 1fr}.tab{font-size:10px;padding:10px 5px}}
+.btn-excel{background:#1D6F42;color:#fff;border-color:#1D6F42}
+.btn-excel:hover:not(:disabled){background:#155c35}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading-overlay">
+  <div class="big-spinner"></div>
+  <span>Carregando atas...</span>
+</div>
+
+<header>
+  <div class="header-logo">
+    <div class="acc-bar"></div>
+    <div>
+      <span class="header-sub">Accenture · Santander Financeira</span>
+      <h1>Daily Operations</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <span id="hd-count" style="font-size:11px;color:var(--text-3);font-weight:500"></span>
+    <span class="save-indicator" id="save-indicator">✓ Salvo</span>
+    <button class="btn btn-excel btn-sm" onclick="exportarExcelGeral()" title="Exportar todas as atas e ações para Excel">📥 Excel</button>
+    <button class="btn btn-sm" id="btn-salvar" onclick="salvarAgora()" title="Salvar agora" style="background:var(--success);color:#fff;border-color:var(--success);opacity:.7">💾 Salvo</button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('lista')">📋 Atas</button>
+    <button class="tab" onclick="showTab('acoes')">✔ Ações</button>
+    <button class="tab" id="tab-nova" onclick="showTab('nova')">+ Nova ata</button>
+  </div>
+
+  <!-- LISTA -->
+  <div id="sec-lista" class="section active">
+    <div class="filtro-row">
+      <input type="text" id="busca" placeholder="Buscar por título, data ou participantes..." oninput="renderLista()">
+      <select id="filtro-status" onchange="renderLista()" style="width:190px">
+        <option value="">Todas as atas</option>
+        <option value="pendente">Com pendentes</option>
+        <option value="concluido">Concluídas</option>
+      </select>
+    </div>
+    <div id="lista-atas"></div>
+  </div>
+
+  <!-- AÇÕES -->
+  <div id="sec-acoes" class="section">
+    <div class="stats-row" id="stats-row"></div>
+    <div style="margin-bottom:1rem;display:flex;gap:8px;align-items:center">
+      <select id="filtro-acoes" onchange="renderTodasAcoes()" style="width:180px">
+        <option value="">Todas as ações</option>
+        <option value="pendente">Pendentes</option>
+        <option value="concluido">Concluídas</option>
+      </select>
+      <button class="btn btn-excel btn-sm" onclick="exportarExcelGeral()">📥 Exportar Excel</button>
+    </div>
+    <div id="todas-acoes"></div>
+  </div>
+
+  <!-- NOVA ATA -->
+  <div id="sec-nova" class="section">
+    <div class="card">
+      <label style="font-size:13px;text-transform:none;letter-spacing:0;font-weight:600;color:var(--text)">Cole o texto completo da ata — extração automática</label>
+      <div class="drop-area" style="margin-top:8px">
+        <textarea id="inp-ata" rows="9" placeholder="Cole aqui o texto da ata..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button class="btn" onclick="limparTudo()">Limpar</button>
+        <button class="btn btn-acc" onclick="extrairLocal()">✨ Extrair</button>
+      </div>
+    </div>
+    <div class="ai-status hidden" id="ai-status"><div class="spinner"></div><span id="ai-msg"></span></div>
+    <div id="preview-area" style="display:none">
+      <div class="preview-card">
+        <div class="preview-header">✅ Revise e confirme</div>
+        <div class="row2">
+          <div class="field"><div class="preview-label">Data</div><input type="date" id="prev-data"></div>
+          <div class="field"><div class="preview-label">Título</div><input type="text" id="prev-titulo"></div>
+        </div>
+        <div class="field"><div class="preview-label">Participantes</div><input type="text" id="prev-partic"></div>
+        <div class="field"><div class="preview-label">Ações identificadas</div><div id="prev-acoes-lista"></div></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+          <button class="btn" onclick="limparTudo()">Cancelar</button>
+          <button class="btn btn-acc" onclick="confirmarSalvar()">💾 Salvar ata</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIÇÃO -->
+<div class="modal-overlay hidden" id="modal-edit" onclick="fecharModalSeFora(event,'modal-edit')">
+  <div class="modal modal-edit">
+    <div class="modal-header">
+      <h2>✏️ Editar ata</h2>
+      <button class="modal-close" onclick="fecharModal('modal-edit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="row2">
+        <div class="field"><label>Data</label><input type="date" id="edit-data"></div>
+        <div class="field"><label>Título</label><input type="text" id="edit-titulo"></div>
+      </div>
+      <div class="field"><label>Participantes</label><input type="text" id="edit-partic"></div>
+      <div class="field"><label>Texto da ata</label><textarea id="edit-texto" rows="5"></textarea></div>
+      <div class="field">
+        <label>Ações</label>
+        <div id="edit-acoes-lista"></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <input type="text" id="edit-nova-acao" placeholder="Nova ação..." style="flex:2;font-size:12px">
+          <input type="text" id="edit-nova-resp" placeholder="Responsável" style="flex:1;font-size:12px">
+          <button class="btn btn-sm btn-acc" onclick="addAcaoEdit()">+ Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="fecharModal('modal-edit')">Cancelar</button>
+      <button class="btn btn-acc" onclick="salvarEdicao()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIGURAÇÃO GITHUB GIST ──────────────────────────────────────
+const GIST_ID    = 'f54e7bc5dd7d8ef267a1bef3f1de9d48';
+const GIST_FILE  = 'daily_operations_data.json';
+const GIST_TOKEN = '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';
+// ─────────────────────────────────────────────────────────────────
+
+// ── GIST API ──────────────────────────────────────────────────────
+async function gistGet(){
+  try{
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`,{
+      headers:{ 'Authorization':`token ${GIST_TOKEN}`, 'Accept':'application/vnd.github.v3+json' }
+    });
+    if(!r.ok) throw new Error('Erro ao carregar: '+r.status);
+    const data = await r.json();
+    const content = data.files[GIST_FILE]?.content;
+    return content ? JSON.parse(content) : null;
+  }catch(e){ console.error('gistGet erro:',e); return null; }
+}
+
+async function gistSet(val){
+  try{
+    const r = await fetch(`https://api.github.com/gists/${GIST_ID}`,{
+      method:'PATCH',
+      headers:{ 'Authorization':`token ${GIST_TOKEN}`, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' },
+      body: JSON.stringify({ files:{ [GIST_FILE]:{ content: JSON.stringify(val, null, 2) } } })
+    });
+    return r.ok;
+  }catch(e){ console.error('gistSet erro:',e); return false; }
+}
+// ─────────────────────────────────────────────────────────────────
+
+// ── AUTOSAVE com debounce de 2s ───────────────────────────────────
+let _saveTimer=null;
+let _pendingSave=false;
+
+function agendarSave(){
+  _pendingSave=true;
+  atualizarBotaoSalvar();
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(()=>{ salvarAgora(); },2000);
+}
+
+async function salvarAgora(){
+  clearTimeout(_saveTimer);
+  atualizarBotaoSalvar('saving');
+  const ok = await gistSet(atas);
+  _pendingSave=false;
+  updateHd();
+  atualizarBotaoSalvar(ok);
+  const ind=document.getElementById('save-indicator');
+  ind.textContent=ok?'✓ Salvo no Gist':'⚠ Erro ao salvar';
+  ind.style.color=ok?'var(--success)':'var(--danger)';
+  ind.classList.add('show');
+  setTimeout(()=>ind.classList.remove('show'),2500);
+}
+
+function atualizarBotaoSalvar(estado){
+  const btn=document.getElementById('btn-salvar');
+  if(!btn)return;
+  if(_pendingSave || estado==='saving'){
+    btn.textContent= estado==='saving'?'⏳ Salvando...':'💾 Salvar*';
+    btn.style.opacity='1';
+    btn.style.background=estado==='saving'?'var(--text-3)':'var(--warn)';
+    btn.style.borderColor=btn.style.background;
+    btn.disabled= estado==='saving';
+  } else {
+    btn.textContent='💾 Salvo';
+    btn.style.opacity='.7';
+    btn.style.background= estado===false?'var(--danger)':'var(--success)';
+    btn.style.borderColor=btn.style.background;
+    btn.disabled=false;
+  }
+}
+// ─────────────────────────────────────────────────────────────────
+const SEED = [{"id":1790016397556,"data":"2026-09-21","titulo":"Daily Operations","participantes":"Bruna Ferreira, Priscila Oliveira, Roberta Salles, Kelvia Moreira, Barbara Borges e Fabiano Dantas Silva.","texto":"Ata de Reunião\n\n[Santander Financeira] Daily Operations\n\nData: 21/09/2026\n\nParticipantes: Bruna Ferreira, Priscila Oliveira, Roberta Salles, Kelvia Moreira, Barbara Borges e Fabiano Dantas Silva.\n\n1. Governança e Controles Operacionais\nFoi reforçada a necessidade de manter registros e atas das reuniões de forma estruturada.\nRoberta e Kelvia apresentarão proposta de controle consolidado de rotinas e automações até quarta-feira.\n\n2. Dashboards e Gestão Visual\nFabiano conduz iniciativa para exibição contínua de dashboards nos telões do escritório.\n\n3. Planejamento de Melhorias e Automações FY27\nRevisão do backlog de iniciativas 2027. Total: 82 iniciativas mapeadas.\nFY27: ~20,1 FTEs de redução prevista. FY28: ~9,1 FTEs.\n\n4. Planejamento de Capacidade e Redução de FTE\nApós ajustes: FY27 aprox. 20,1 FTEs, FY28 aprox. 9,1 FTEs.\n\n5. Relacionamento com Cliente\nBruna avança nas discussões internas sobre projetos de Parecer e Sucata.\n\n6. Pendências\n- Fabiano: agendar reunião com Pedro na 1ª semana de outubro.\n- Todos os líderes: atualizar planilha de backlog.\n- Roberta: revisar itens da Onda 3.\n- Kelvia: varredura adicional nos chamados.","acoes":[{"id":"1790016397556_0.9001799892525871","texto":"Roberta e Kelvia apresentarão proposta de controle consolidado de rotinas e automações","responsavel":"Roberta / Kelvia","prazo":"Quarta-feira","concluida":true},{"id":"1790016397556_0.009445999043992126","texto":"Validar se os ganhos previstos possuem aderência aos desligamentos e movimentações de pessoas planejados","responsavel":"","prazo":"","concluida":true},{"id":"1790016397556_0.6871956213967001","texto":"Kelvia realizará sessão com Priscila para demonstrar leitura e acompanhamento dos reportes atuais","responsavel":"Kelvia","prazo":"","concluida":true},{"id":"1790016397556_0.8513153653262372","texto":"Agendar reunião com Pedro e demais envolvidos na primeira semana de outubro","responsavel":"Fabiano","prazo":"1ª semana de outubro","concluida":true},{"id":"1790016397556_0.9505044216046241","texto":"Atualizar a planilha sempre que novos chamados ou iniciativas forem abertos","responsavel":"Todos os líderes","prazo":"","concluida":false},{"id":"1790016397556_0.46814082120564293","texto":"Revisar itens da Onda 3 e consolidar iniciativas pendentes","responsavel":"Roberta","prazo":"","concluida":false},{"id":"1790016397556_0.5205736147842498","texto":"Realizar varredura adicional nos chamados para identificar itens não contemplados","responsavel":"Kelvia","prazo":"","concluida":false}]},{"id":1790016292644,"data":"2026-09-18","titulo":"Daily Operations","participantes":"Bruna Ferreira, Kelvia Moreira, Priscila Oliveira, Roberta Salles, Barbara Borges","texto":"ATA – [Santander Financeira] Daily Operations\nData: 18/09/2026\n\n1. Divergências no processo de Seguros\nInconsistências apontadas pelas áreas de Seguros. Ações: avaliar origem, verificar oportunidades de validação adicional.\n\n2. Visibilidade para Comitê Executivo\nFoco em: problema, causa raiz, solução, resultado.\n\n3. Indicadores de Corretor\nConstruir visão proativa das demandas de corretor no Pipefy.\n\n4. Regras de Corretor e Subestabelecimento\nParametrizações que podem conflitar quando vínculos coexistem.\n\n5. Instabilidade sistêmica (Municad)\nRecorrência crescente de falhas — retrabalho e reprocessamentos frequentes.\n\n6. Plano de correção E-XYON\nPriorizar correção da causa raiz antes de melhorias secundárias.","acoes":[]},{"id":1790016181656,"data":"2026-09-04","titulo":"Daily Operations","participantes":"Priscila Oliveira, Bruna Ferreira, Roberta Salles, Kelvia Moreira, Barbara Borges","texto":"ATA DE REUNIÃO\nSantander Financeira | Daily Operations\nData: 04/09/2026\n\n1. Gestão de Pessoas\nBruna: cirurgia entre 14/09 e 18/09. Barbara: férias em outubro.\n\n2. Governança de Automações\nNenhuma área deve acionar analistas operacionais diretamente para alterações.\nToda solicitação via líder responsável.\n\n3. Retomados\nOnda 3: cards abertos, testes em andamento, conclusão prevista início da próxima semana.\n\n4. Inventário de Máquinas\nValidar inventário de ~52 máquinas e retornar posicionamento.\n\n5. Antifraude\nReunião agendada para 08/09 sobre validação documental e antifraude.\n\n6. Gestão do Conhecimento\nRegistrar atas em repositório centralizado com histórico de ações.","acoes":[{"id":"1790016181656_0.16636307471492617","texto":"Consolidar saldo de férias pendentes da equipe","responsavel":"Todos","prazo":"","concluida":true},{"id":"1790016181656_0.7191257193744619","texto":"Revisar cronograma de férias e plano de zeragem de backlog","responsavel":"Priscila","prazo":"","concluida":true},{"id":"1790016181656_0.9339333960437275","texto":"Reforçar governança: nenhuma área aciona analistas diretamente sem passar pelo líder","responsavel":"Barbara Borges","prazo":"","concluida":true},{"id":"1790016181656_0.48319872285137067","texto":"Concluir testes da Onda 3 e atualizar material de implantação","responsavel":"Roberta Salles","prazo":"","concluida":true},{"id":"1790016181656_0.05581094052786084","texto":"Validar inventário de máquinas e consolidar devolutiva para Rodrigo","responsavel":"Barbara Borges","prazo":"","concluida":true},{"id":"1790016181656_0.8694222627877078","texto":"Regularizar apontamentos e saldos negativos de horas","responsavel":"Líderes","prazo":"","concluida":true}]},{"id":1790015272156,"data":"2026-08-28","titulo":"Daily Operations","participantes":"Priscila Oliveira, Bruna Ferreira, Fabiano Dantas, Bárbara Borges, Kelvia Moreira, Roberta Salles","texto":"ATA DE REUNIÃO\nSantander Financeira | Daily Operations\nData: 28/08/2026\n\n1. Contingência Pipefy (4º dia de bloqueio)\nComunicação única para o cliente. Contingências por área:\n- Pós-Vendas: respostas via caixa alternativa, usar Responder a Todos.\n- Credenciamento: e-mail alternativo (Andressa Borba / Marco Muller).\n- Originação: Breno Corrêa retorna por e-mail e registra no Pipefy.\n\n2. Fechamento Mensal\nRisco de concentração de volume no dia 31. Registrar horários de recebimento dos lotes.\n\n3. Incidente Pipefy\nProblema não exclusivo ao multi-tenant. Avaliar aceleração da migração para ambiente dedicado.\n\n4. Reconhecimento\nPontos expiram em 31/08 — verificar campanhas pendentes.\n\n5. Incidente Chassi\nCorreção implantada em 25/08. Apenas 2 casos remanescentes.","acoes":[{"id":"1790015272156_0.4398519448676893","texto":"Consolidar comunicado oficial de contingência para o cliente","responsavel":"Bárbara Borges","prazo":"Imediato","concluida":true},{"id":"1790015272156_0.9123373014431362","texto":"Alinhar comunicação preventiva com Ailton sobre contingência de Originação","responsavel":"Fabiano Dantas","prazo":"Imediato","concluida":true},{"id":"1790015272156_0.36464704782993307","texto":"Registrar respostas enviadas por e-mail no Pipefy para manter rastreabilidade","responsavel":"Breno Corrêa","prazo":"Durante contingência","concluida":true},{"id":"1790015272156_0.5825313481633305","texto":"Monitorar evolução do bloqueio e retorno do fornecedor","responsavel":"Priscila / Bruna","prazo":"Diário","concluida":true},{"id":"1790015272156_0.8413573058228759","texto":"Implementar reporte de horários de recebimento e processamento dos lotes","responsavel":"Roberta Salles","prazo":"Fechamento de agosto","concluida":true},{"id":"1790015272156_0.886340800195282","texto":"Verificar campanhas de reconhecimento pendentes e utilizar pontos","responsavel":"Todos os gestores","prazo":"Até 31/08","concluida":true},{"id":"1790015272156_0.1674900120916364","texto":"Enviar planilha de necessidade de horas extras","responsavel":"Operações","prazo":"Até 15h","concluida":true},{"id":"1790015272156_0.6835271688582898","texto":"Monitorar estabilização após correção do incidente de Chassi","responsavel":"Equipe","prazo":"","concluida":true}]},{"id":1790014157247,"data":"2026-08-26","titulo":"Daily Operations","participantes":"Priscila Oliveira, Bruna Ferreira, Kelvia Moreira, Roberta Salles, Barbara Borges, Fabiano Dantas","texto":"ATA DE REUNIÃO\nDaily Operations | Santander Financeira\nData: 26/08/2026\n\n1. Fechamento de Mês — Retomados\nOportunidade de automação para consulta dos códigos pagos.\n\n2. Governança — Remessas\nRemapeamento de responsáveis e revisão diária das atividades.\n\n3. ElevenLabs + Pipefy\nEstudos avançados para atualização cadastral via IA + WhatsApp.\n\n4. Incidente TAB (Credenciamento)\n82 casos parados. Botão de confirmação não conclui o processo.\nEscalonamento junto às equipes técnicas.\n\n5. GCA — Pós-Vendas\nVolumétria crescente. Nota 3 com risco de queda para Nota 2.\nHoras extras, sábados e apoio de Originação aprovados.\n\n6. Contratos CP — Originação\nContratos subindo com páginas em branco. Correção implantada na última release.","acoes":[{"id":"1790014157247_0.1592892585118758","texto":"Acompanhar correção do cadastro TAB","responsavel":"Kelvia / Priscila","prazo":"","concluida":true},{"id":"1790014157247_0.3640042379955104","texto":"Atualizar Flavia sobre os 82 casos impactados no TAB","responsavel":"Kelvia","prazo":"","concluida":true},{"id":"1790014157247_0.2063843985570194","texto":"Consolidar proposta ElevenLabs + Pipefy para atualização cadastral","responsavel":"Priscila","prazo":"","concluida":false},{"id":"1790014157247_0.9931454958308362","texto":"Validar incidentes que interromperam iniciativas Pipefy","responsavel":"Priscila","prazo":"","concluida":true},{"id":"1790014157247_0.9700414209549407","texto":"Revisar governança e ownership das atividades de Remessas","responsavel":"Kelvia","prazo":"","concluida":true}]},{"id":1790013659141,"data":"2026-07-28","titulo":"Daily Operations","participantes":"Priscila Oliveira, Roberta Salles, Bruna Ferreira, Barbara Borges, Fabiano Silva","texto":"ATA DE REUNIÃO\nSantander Financeira | Daily Operations\nData: 28/07/2026\n\n1. Certificação e avaliação dos times\nAvaliações com base nos POPs. Google Forms como ferramenta.\nRetomados e Credenciamento já possuem evidências.\n\n2. Evidências para auditoria\nConsolidar: banco de questões, resultados, matriz de certificação, atas dos comitês, indicadores de qualidade.\n\n3. Comunicação operacional\nIncluir metas diárias nos reportes. Identificar responsáveis por pendências.\n\n4. Automações e fechamento\nGanho operacional relevante com automações. Monitoramento reforçado durante fechamento.\n\n5. Governança\nPublicar reportes no canal de governança mencionando os responsáveis diretamente.","acoes":[{"id":"1790013659141_0.38170844574316753","texto":"Gerar questões de certificação com base nos POPs e aplicar aos times","responsavel":"Líderes de cada torre","prazo":"","concluida":true},{"id":"1790013659141_0.45767196801145027","texto":"Estruturar prompt padrão para geração futura das avaliações","responsavel":"Priscila Oliveira","prazo":"","concluida":true},{"id":"1790013659141_0.6558384652784457","texto":"Aplicar avaliações para 100% dos colaboradores e consolidar resultados","responsavel":"Líderes das torres","prazo":"","concluida":true},{"id":"1790013659141_0.4697164754433599","texto":"Atualizar matriz de certificação com os colaboradores aprovados","responsavel":"Roberta Salles","prazo":"","concluida":true},{"id":"1790013659141_0.14240278154232033","texto":"Consolidar evidências das provas aplicadas e certificações concluídas","responsavel":"Roberta Salles","prazo":"","concluida":true},{"id":"1790013659141_0.003525769914095367","texto":"Validar evidências dos Comitês Operacionais e respectivas atas","responsavel":"Todos os líderes","prazo":"","concluida":true},{"id":"1790013659141_0.7411139605462144","texto":"Revisar requisitos da auditoria item a item, identificando riscos e pendências","responsavel":"Priscila, Roberta, Bruna, Barbara, Fabiano","prazo":"","concluida":true},{"id":"1790013659141_0.9220811371977764","texto":"Publicar reporte de sensibilidade das automações","responsavel":"Fabiano Silva","prazo":"","concluida":true},{"id":"1790013659141_0.6816341064316038","texto":"Monitorar comportamento das automações durante o fechamento operacional","responsavel":"Fabiano e Roberta","prazo":"","concluida":true},{"id":"1790013659141_0.9265022514640112","texto":"Publicar atualizações críticas no canal de Governança com direcionamento aos responsáveis","responsavel":"Todos os líderes","prazo":"","concluida":true}]}];
+
+let atas = [];
+let modoEditor = true;
+let editandoId = null;
+let dadosExtraidos = null;
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtData(d){if(!d)return'';try{const[y,m,di]=d.split('-');return`${di}/${m}/${y}`;}catch(e){return d;}}
+function uid(){return Date.now()+'_'+Math.random();}
+function setStatus(t,m){const el=document.getElementById('ai-status');el.className='ai-status '+(t||'hidden');document.getElementById('ai-msg').textContent=m||'';}
+
+async function loadAtas(){
+  document.querySelector('#loading-overlay span').textContent='Carregando atas do Gist...';
+  const saved = await gistGet();
+  if(saved && Array.isArray(saved) && saved.length) atas=saved;
+  else{
+    atas=JSON.parse(JSON.stringify(SEED));
+    await gistSet(atas); // inicializa o Gist com os dados seed
+  }
+  document.getElementById('loading-overlay').classList.add('hidden');
+  updateHd(); renderLista(); atualizarBotaoSalvar(true);
+}
+
+function saveAtas(){ agendarSave(); }
+
+function updateHd(){
+  const el=document.getElementById('hd-count');
+  if(el) el.textContent=atas.length+' ata'+(atas.length!==1?'s':'')+' · ';
+}
+
+function showTab(t){
+  const names=['lista','acoes','nova'];
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',names[i]===t));
+  ['sec-lista','sec-acoes','sec-nova'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',names[i]===t));
+  if(t==='lista')renderLista();
+  if(t==='acoes')renderTodasAcoes();
+}
+
+
+
+function extrairLocal(){
+  const texto=document.getElementById('inp-ata').value.trim();
+  if(!texto){alert('Cole o texto da ata primeiro.');return;}
+  setStatus('loading','Analisando o texto...');
+  setTimeout(()=>{
+    try{
+      const d=parseAta(texto);d._textoOriginal=texto;dadosExtraidos=d;
+      mostrarPreview(d);setStatus('success','Extração concluída! Revise e confirme.');
+    }catch(e){setStatus('error','Não foi possível extrair.');}
+  },400);
+}
+function parseAta(txt){
+  const meses={janeiro:'01',fevereiro:'02',março:'03',abril:'04',maio:'05',junho:'06',julho:'07',agosto:'08',setembro:'09',outubro:'10',novembro:'11',dezembro:'12'};
+  let data=null,m;
+  m=txt.match(/Data[:\s]+(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/i);
+  if(m)data=`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  if(!m){m=txt.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);if(m)data=`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
+  let titulo='Daily Operations';
+  const tM=txt.match(/Reuni[aã]o[:\s]+(.+)/i);
+  if(tM)titulo=tM[1].trim();
+  let participantes='';
+  const pM=txt.match(/Participantes[:\s]+([^\n]+)/i);
+  if(pM)participantes=pM[1].trim();
+  const acoes=[];
+  const verbos=/\b(definir|realizar|incluir|implementar|criar|adicionar|utilizar|aplicar|enviar|apresentar|revisar|validar|mapear|desenvolver|garantir|atualizar|agendar|verificar|comunicar|elaborar|consolidar|entregar|alinhar|configurar|finalizar|corrigir|submeter|cobrar|acompanhar|continuar|formalizar)\b/i;
+  const filtro=/\b(deve|deverá|será|serão|responsável|ação|tarefa|pendência|follow.?up)\b/i;
+  txt.split('\n').forEach(l=>{
+    const s=l.trim().replace(/^[\*\-•\d\.]+\s+/,'');
+    if(s.length>25&&(filtro.test(s)||verbos.test(s)))
+      acoes.push({id:uid(),texto:s,responsavel:'',prazo:'',concluida:false});
+  });
+  return{titulo,data,participantes,acoes};
+}
+function mostrarPreview(d){
+  document.getElementById('prev-data').value=d.data||'';
+  document.getElementById('prev-titulo').value=d.titulo||'';
+  document.getElementById('prev-partic').value=d.participantes||'';
+  const lista=document.getElementById('prev-acoes-lista');
+  lista.innerHTML=(!d.acoes||!d.acoes.length)?'<div style="font-size:12px;color:var(--text-3);padding:5px 0">Nenhuma ação identificada.</div>':
+    d.acoes.map(a=>`<div class="acao-preview"><div class="acao-preview-dot"></div><div style="flex:1;font-size:13px;font-weight:500">${esc(a.texto)}</div></div>`).join('');
+  document.getElementById('preview-area').style.display='block';
+}
+function confirmarSalvar(){
+  if(!dadosExtraidos)return;
+  const titulo=document.getElementById('prev-titulo').value.trim();
+  if(!titulo){alert('O título é obrigatório.');return;}
+  atas.unshift({id:Date.now(),data:document.getElementById('prev-data').value,titulo,participantes:document.getElementById('prev-partic').value.trim(),texto:dadosExtraidos._textoOriginal||'',acoes:(dadosExtraidos.acoes||[]).map(a=>({...a,id:uid()}))});
+  saveAtas();limparTudo();alert('Ata salva!');showTab('lista');
+}
+function limparTudo(){document.getElementById('inp-ata').value='';document.getElementById('preview-area').style.display='none';setStatus('','');dadosExtraidos=null;}
+
+function abrirModalEdit(id){
+  const ata=atas.find(a=>String(a.id)===String(id));if(!ata)return;
+  editandoId=id;
+  document.getElementById('edit-data').value=ata.data||'';
+  document.getElementById('edit-titulo').value=ata.titulo||'';
+  document.getElementById('edit-partic').value=ata.participantes||'';
+  document.getElementById('edit-texto').value=ata.texto||'';
+  renderAcoesEdit(ata.acoes);
+  document.getElementById('modal-edit').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+function renderAcoesEdit(acoes){
+  const lista=document.getElementById('edit-acoes-lista');
+  if(!acoes||!acoes.length){lista.innerHTML='<div style="font-size:12px;color:var(--text-3);padding:5px 0">Nenhuma ação.</div>';return;}
+  lista.innerHTML=acoes.map(a=>`<div class="acao-edit-row"><div style="flex:1"><input type="text" value="${esc(a.texto)}" id="etxt-${a.id}" style="margin-bottom:4px"><div style="display:flex;gap:5px"><input type="text" value="${esc(a.responsavel||'')}" id="eresp-${a.id}" placeholder="Responsável" style="flex:1"><input type="text" value="${esc(a.prazo||'')}" id="eprazo-${a.id}" placeholder="Prazo" style="flex:1"></div></div><button class="btn btn-sm btn-danger" onclick="remAcaoEdit('${a.id}')">✕</button></div>`).join('');
+}
+function remAcaoEdit(aid){const ata=atas.find(a=>String(a.id)===String(editandoId));if(!ata)return;ata.acoes=ata.acoes.filter(a=>String(a.id)!==String(aid));renderAcoesEdit(ata.acoes);}
+function addAcaoEdit(){
+  const txt=document.getElementById('edit-nova-acao').value.trim();if(!txt){alert('Descreva a ação.');return;}
+  const resp=document.getElementById('edit-nova-resp').value.trim();
+  const ata=atas.find(a=>String(a.id)===String(editandoId));if(!ata)return;
+  ata.acoes.push({id:uid(),texto:txt,responsavel:resp,prazo:'',concluida:false});
+  document.getElementById('edit-nova-acao').value='';document.getElementById('edit-nova-resp').value='';
+  renderAcoesEdit(ata.acoes);
+}
+function salvarEdicao(){
+  const ata=atas.find(a=>String(a.id)===String(editandoId));if(!ata)return;
+  ata.data=document.getElementById('edit-data').value;
+  ata.titulo=document.getElementById('edit-titulo').value.trim();
+  ata.participantes=document.getElementById('edit-partic').value.trim();
+  ata.texto=document.getElementById('edit-texto').value;
+  ata.acoes.forEach(a=>{
+    const t=document.getElementById('etxt-'+a.id),r=document.getElementById('eresp-'+a.id),p=document.getElementById('eprazo-'+a.id);
+    if(t)a.texto=t.value;if(r)a.responsavel=r.value;if(p)a.prazo=p.value;
+  });
+  saveAtas();fecharModal('modal-edit');renderLista();
+}
+
+function renderLista(){
+  const busca=(document.getElementById('busca').value||'').toLowerCase();
+  const status=document.getElementById('filtro-status').value;
+  const lista=atas.filter(a=>{
+    const match=!busca||a.titulo.toLowerCase().includes(busca)||a.data.includes(busca)||(a.participantes||'').toLowerCase().includes(busca);
+    const pend=a.acoes.some(ac=>!ac.concluida);
+    const conc=a.acoes.length>0&&a.acoes.every(ac=>ac.concluida);
+    if(status==='pendente'&&!pend)return false;
+    if(status==='concluido'&&!conc)return false;
+    return match;
+  });
+  const el=document.getElementById('lista-atas');
+  if(!lista.length){el.innerHTML='<div class="empty">📂 Nenhuma ata encontrada.</div>';return;}
+  el.innerHTML=lista.map(a=>{
+    const total=a.acoes.length,conc=a.acoes.filter(ac=>ac.concluida).length,pend=total-conc;
+    const pct=total?Math.round(conc/total*100):0;
+    const botoesEditor=`<button class="btn btn-sm btn-excel" onclick="exportarExcelAta('${a.id}')">📥 Excel</button>`+(modoEditor?`<button class="btn btn-sm" onclick="abrirModalEdit('${a.id}')">✏️ Editar</button><button class="btn btn-sm btn-danger" onclick="deletarAta('${a.id}')">🗑</button>`:'');
+    return `<div class="ata-item"><div class="ata-header" onclick="toggleAta('${a.id}')"><div style="flex:1;min-width:0"><div class="ata-title">${esc(a.titulo)}</div><div class="ata-meta">📅 ${fmtData(a.data)}${a.participantes?' · 👥 '+esc(a.participantes):''}</div>${total>0?`<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}</div><div style="display:flex;align-items:center;gap:7px;margin-left:10px;flex-shrink:0">${pend>0?`<span class="badge badge-pend">⏳ ${pend}</span>`:''}${pend===0&&total>0?`<span class="badge badge-ok">✓</span>`:''}<span id="chev-${a.id}" style="color:var(--text-3);font-size:15px">▾</span></div></div><div class="ata-body" id="body-${a.id}">${a.texto?`<div class="ata-texto">${esc(a.texto)}</div>`:''}<div class="acoes-titulo">Ações (${conc}/${total})</div>${!total?'<div style="font-size:12px;color:var(--text-3)">Nenhuma ação.</div>':a.acoes.map(ac=>`<div class="acao-item"><input type="checkbox" ${ac.concluida?'checked':''} ${modoEditor?'':'disabled'} onchange="toggleAcao('${a.id}','${ac.id}',this.checked)"><div style="flex:1"><div class="acao-txt ${ac.concluida?'done':''}" id="txt-${ac.id}">${esc(ac.texto)}</div>${ac.responsavel?`<div class="acao-resp">👤 ${esc(ac.responsavel)}</div>`:''}${ac.prazo?`<div class="acao-prazo">⏰ ${esc(ac.prazo)}</div>`:''}</div></div>`).join('')}<div style="display:flex;justify-content:flex-end;gap:7px;margin-top:10px">${botoesEditor}</div></div></div>`;
+  }).join('');
+}
+function toggleAta(id){const body=document.getElementById('body-'+id),chev=document.getElementById('chev-'+id);const open=body.classList.toggle('open');chev.textContent=open?'▴':'▾';chev.style.color=open?'var(--acc)':'var(--text-3)';}
+function toggleAcao(ataId,acaoId,val){
+  if(!modoEditor)return;
+  const ata=atas.find(a=>String(a.id)===String(ataId));if(!ata)return;
+  const ac=ata.acoes.find(a=>String(a.id)===String(acaoId));if(!ac)return;
+  ac.concluida=val;saveAtas();
+  const txt=document.getElementById('txt-'+acaoId);if(txt)txt.className='acao-txt'+(val?' done':'');
+}
+function deletarAta(id){
+  if(!confirm('Excluir esta ata?'))return;
+  atas=atas.filter(a=>String(a.id)!==String(id));saveAtas();renderLista();
+}
+
+function renderTodasAcoes(){
+  const filtro=document.getElementById('filtro-acoes').value;
+  let total=0,conc=0;
+  atas.forEach(a=>a.acoes.forEach(ac=>{total++;if(ac.concluida)conc++;}));
+  document.getElementById('stats-row').innerHTML=`<div class="stat"><div class="stat-n" style="color:var(--acc)">${total}</div><div class="stat-l">Total</div></div><div class="stat"><div class="stat-n" style="color:var(--warn)">${total-conc}</div><div class="stat-l">Pendentes</div></div><div class="stat"><div class="stat-n" style="color:var(--success)">${conc}</div><div class="stat-l">Concluídas</div></div>`;
+  let html='';
+  atas.forEach(a=>{
+    const acoes=a.acoes.filter(ac=>filtro==='pendente'?!ac.concluida:filtro==='concluido'?ac.concluida:true);
+    if(!acoes.length)return;
+    const c=a.acoes.filter(ac=>ac.concluida).length;
+    html+=`<div class="ata-acoes-grp"><div class="ata-acoes-grp-header"><div style="font-size:13px;font-weight:700">${esc(a.titulo)}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">📅 ${fmtData(a.data)} · ${c}/${a.acoes.length} concluída${a.acoes.length!==1?'s':''}</div></div><div class="ata-acoes-grp-body">${acoes.map(ac=>`<div class="acao-item"><input type="checkbox" ${ac.concluida?'checked':''} ${modoEditor?'':'disabled'} onchange="toggleAcaoG('${a.id}','${ac.id}',this.checked)"><div style="flex:1"><div class="acao-txt ${ac.concluida?'done':''}" id="gtxt-${ac.id}">${esc(ac.texto)}</div>${ac.responsavel?`<div class="acao-resp">👤 ${esc(ac.responsavel)}</div>`:''}${ac.prazo?`<div class="acao-prazo">⏰ ${esc(ac.prazo)}</div>`:''}</div></div>`).join('')}</div></div>`;
+  });
+  document.getElementById('todas-acoes').innerHTML=html||'<div class="empty">✅ Nenhuma ação encontrada.</div>';
+}
+function toggleAcaoG(ataId,acaoId,val){
+  if(!modoEditor)return;
+  const ata=atas.find(a=>String(a.id)===String(ataId));if(!ata)return;
+  const ac=ata.acoes.find(a=>String(a.id)===String(acaoId));if(!ac)return;
+  ac.concluida=val;saveAtas();
+  const txt=document.getElementById('gtxt-'+acaoId);if(txt)txt.className='acao-txt'+(val?' done':'');
+}
+
+function fecharModal(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow='';}
+function fecharModalSeFora(e,id){if(e.target===document.getElementById(id))fecharModal(id);}
+
+// ── EXCEL EXPORT ────────────────────────────────────────────────
+function _buildAcoesRows(lista){
+  const rows=[['Ata','Data','Participantes','Ação','Responsável','Prazo','Status']];
+  lista.forEach(a=>{
+    if(!a.acoes||!a.acoes.length){
+      rows.push([a.titulo,fmtData(a.data),a.participantes||'','(sem ações)','','','']);
+    } else {
+      a.acoes.forEach(ac=>{
+        rows.push([
+          a.titulo,
+          fmtData(a.data),
+          a.participantes||'',
+          ac.texto||'',
+          ac.responsavel||'',
+          ac.prazo||'',
+          ac.concluida?'Concluída':'Pendente'
+        ]);
+      });
+    }
+  });
+  return rows;
+}
+
+function _buildAtasRows(lista){
+  return [
+    ['Título','Data','Participantes','Total Ações','Concluídas','Pendentes','% Conclusão'],
+    ...lista.map(a=>{
+      const total=a.acoes.length,conc=a.acoes.filter(ac=>ac.concluida).length;
+      return [a.titulo,fmtData(a.data),a.participantes||'',total,conc,total-conc,total?Math.round(conc/total*100)+'%':'—'];
+    })
+  ];
+}
+
+function _estilizarSheet(ws, headerCols){
+  // larguras de coluna automáticas baseadas no conteúdo
+  ws['!cols'] = headerCols.map(w=>({wch:w}));
+}
+
+function _downloadXlsx(wb, nome){
+  XLSX.writeFile(wb, nome);
+}
+
+function exportarExcelGeral(){
+  const wb = XLSX.utils.book_new();
+
+  // Aba 1 – Resumo das atas
+  const atasRows = _buildAtasRows(atas);
+  const wsAtas = XLSX.utils.aoa_to_sheet(atasRows);
+  _estilizarSheet(wsAtas,[30,14,40,12,12,12,14]);
+  XLSX.utils.book_append_sheet(wb, wsAtas, 'Atas');
+
+  // Aba 2 – Todas as ações
+  const acoesRows = _buildAcoesRows(atas);
+  const wsAcoes = XLSX.utils.aoa_to_sheet(acoesRows);
+  _estilizarSheet(wsAcoes,[30,14,40,55,25,20,12]);
+  XLSX.utils.book_append_sheet(wb, wsAcoes, 'Ações');
+
+  // Aba 3 – Apenas pendentes
+  const pendentes = atas.map(a=>({...a,acoes:a.acoes.filter(ac=>!ac.concluida)})).filter(a=>a.acoes.length);
+  const wsPend = XLSX.utils.aoa_to_sheet(_buildAcoesRows(pendentes));
+  _estilizarSheet(wsPend,[30,14,40,55,25,20,12]);
+  XLSX.utils.book_append_sheet(wb, wsPend, 'Pendências');
+
+  _downloadXlsx(wb, 'DailyOperations_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+
+function exportarExcelAta(id){
+  const ata = atas.find(a=>String(a.id)===String(id));
+  if(!ata) return;
+  const wb = XLSX.utils.book_new();
+
+  // Aba 1 – Info da ata
+  const wsInfo = XLSX.utils.aoa_to_sheet([
+    ['Campo','Valor'],
+    ['Título', ata.titulo],
+    ['Data', fmtData(ata.data)],
+    ['Participantes', ata.participantes||''],
+    ['Total de ações', ata.acoes.length],
+    ['Concluídas', ata.acoes.filter(ac=>ac.concluida).length],
+    ['Pendentes', ata.acoes.filter(ac=>!ac.concluida).length],
+    ['',''],
+    ['Texto completo',''],
+    [ata.texto||'','']
+  ]);
+  _estilizarSheet(wsInfo,[20,70]);
+  XLSX.utils.book_append_sheet(wb, wsInfo, 'Ata');
+
+  // Aba 2 – Todas as ações
+  const wsAcoes = XLSX.utils.aoa_to_sheet(_buildAcoesRows([ata]));
+  _estilizarSheet(wsAcoes,[30,14,40,55,25,20,12]);
+  XLSX.utils.book_append_sheet(wb, wsAcoes, 'Ações');
+
+  // Aba 3 – Pendências
+  const ataPend = {...ata, acoes: ata.acoes.filter(ac=>!ac.concluida)};
+  const wsPend = XLSX.utils.aoa_to_sheet(_buildAcoesRows([ataPend]));
+  _estilizarSheet(wsPend,[30,14,40,55,25,20,12]);
+  XLSX.utils.book_append_sheet(wb, wsPend, 'Pendências');
+
+  const nomeArq = 'Ata_'+ata.data+'_'+ata.titulo.replace(/[^a-zA-Z0-9]/g,'_').slice(0,30)+'.xlsx';
+  _downloadXlsx(wb, nomeArq);
+}
+// ────────────────────────────────────────────────────────────────
+
+loadAtas();
+</script>
+</body>
+</html>
